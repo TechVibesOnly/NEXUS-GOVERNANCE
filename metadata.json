@@ -1,0 +1,6 @@
+{
+  "name": "NEXUS GOVERNANCE GROUP",
+  "description": "The flagship platform and interactive governance portal for NEXUS GOVERNANCE GROUP. Elite AI compliance monitoring, continuous auditing, and regulatory analysis.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

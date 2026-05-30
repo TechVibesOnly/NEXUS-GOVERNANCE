@@ -1,0 +1,2717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEXUS GOVERNANCE GROUP | AI Compliance & Trust</title>
+  
+  <!-- Typography & CDN Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@700;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- Core CDN Libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/TextPlugin.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <style>
+    /* DESIGN SYSTEM & GLOBAL STYLES */
+    :root {
+      --void: #020308;
+      --deep-navy: #050d1a;
+      --navy: #0a1628;
+      --navy-mid: #0f2040;
+      --gold: #c9a84c;
+      --gold-bright: #e8c56d;
+      --gold-pale: #f5e4b0;
+      --platinum: #e8eaf0;
+      --ice: #a8b8d0;
+      --text-primary: #eef0f5;
+      --text-secondary: #7a8fa8;
+      --glass: rgba(10, 22, 40, 0.6);
+      --glass-border: rgba(201, 168, 76, 0.15);
+      --radius: 2px;
+      --font-display: 'Cormorant Garamond', serif;
+      --font-mono: 'DM Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body {
+      background-color: var(--void);
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.6;
+    }
+
+    /* CUSTOM CURSOR */
+    #custom-cursor {
+      position: fixed;
+      width: 12px;
+      height: 12px;
+      background: var(--gold);
+      border-radius: 50%;
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      z-index: 10000;
+      mix-blend-mode: difference;
+      transition: width 0.25s, height 0.25s, background-color 0.25s, border 0.25s;
+    }
+    #custom-cursor.cursor-hover {
+      width: 44px;
+      height: 44px;
+      background: transparent;
+      border: 1px solid var(--gold-bright);
+      mix-blend-mode: normal;
+    }
+
+    /* SCROLL PROGRESS */
+    #scroll-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 3px;
+      background: var(--gold-bright);
+      width: 0%;
+      z-index: 10001;
+    }
+
+    /* LOADING SCREEN */
+    #loader {
+      position: fixed;
+      inset: 0;
+      background: var(--void);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 20000;
+    }
+    #loader h1 {
+      font-family: var(--font-display);
+      font-size: 80px;
+      font-weight: 900;
+      color: var(--gold);
+      letter-spacing: 4px;
+    }
+    #loader .progress-track {
+      width: 300px;
+      height: 2px;
+      background: var(--navy-mid);
+      margin-top: 30px;
+      position: relative;
+    }
+    #loader .progress-bar {
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      background: var(--gold);
+      width: 0%;
+    }
+
+    /* NAVIGATION HEADER */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px 8%;
+      z-index: 900;
+      transition: background 0.3s, backdrop-filter 0.3s, border-bottom 0.3s;
+    }
+    header.scrolled {
+      background: rgba(2, 3, 8, 0.95);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--glass-border);
+      padding: 16px 8%;
+    }
+    header .logo {
+      display: flex;
+      flex-direction: column;
+    }
+    header .logo-main {
+      font-family: var(--font-display);
+      font-size: 24px;
+      font-weight: 900;
+      color: var(--gold);
+      letter-spacing: 1px;
+    }
+    header .logo-sub {
+      font-size: 8px;
+      color: var(--ice);
+      letter-spacing: 4px;
+    }
+    header nav {
+      display: flex;
+      gap: 32px;
+    }
+    header nav a {
+      color: var(--ice);
+      text-decoration: none;
+      font-size: 11px;
+      letter-spacing: 2px;
+      position: relative;
+      padding-bottom: 4px;
+      transition: color 0.3s;
+    }
+    header nav a:hover, header nav a.active {
+      color: var(--gold);
+    }
+    header nav a::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0%;
+      height: 1px;
+      background: var(--gold);
+      transition: width 0.3s;
+    }
+    header nav a:hover::after, header nav a.active::after {
+      width: 100%;
+    }
+    header .btn-cert {
+      border: 1px solid var(--gold);
+      background: transparent;
+      color: var(--gold);
+      padding: 10px 20px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 1px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: transform 0.2s, background 0.2s, color 0.2s, box-shadow 0.2s;
+    }
+    header .btn-cert:hover {
+      background: var(--gold);
+      color: var(--void);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(201, 168, 76, 0.25);
+    }
+    header .btn-cert:active {
+      transform: scale(0.97);
+    }
+
+    /* HAMBURGER & MOBILE MENU */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 6px;
+      cursor: pointer;
+    }
+    .hamburger span {
+      width: 24px;
+      height: 1px;
+      background: var(--gold);
+      transition: transform 0.3s, opacity 0.3s;
+    }
+    #mobile-menu {
+      position: fixed;
+      inset: 0;
+      background: var(--void);
+      z-index: 800;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 30px;
+      transform: translateY(-100%);
+      transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    #mobile-menu.open {
+      transform: translateY(0);
+    }
+    #mobile-menu a {
+      font-size: 18px;
+      color: var(--text-primary);
+      text-decoration: none;
+      letter-spacing: 3px;
+    }
+
+    /* GLOBAL SECTION ELEMENTS */
+    section {
+      width: 100%;
+      padding: 120px 8%;
+      position: relative;
+    }
+    .divider {
+      width: 100%;
+      height: 1px;
+      background: rgba(201, 168, 76, 0.15);
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .divider::after {
+      content: attr(data-index);
+      font-size: 10px;
+      color: var(--gold);
+      opacity: 0.4;
+      background: var(--void);
+      padding: 0 15px;
+      letter-spacing: 2px;
+    }
+
+    .section-title {
+      max-width: 800px;
+      margin-bottom: 60px;
+    }
+    .section-title .overline {
+      font-size: 10px;
+      color: var(--gold);
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .section-title h2 {
+      font-family: var(--font-display);
+      font-size: 56px;
+      font-weight: 700;
+      line-height: 1.1;
+      color: var(--text-primary);
+    }
+
+    /* GLASS CARDS & GLOW EFFECTS */
+    .glass-card {
+      background: var(--glass);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius);
+      padding: 40px;
+      position: relative;
+      transition: border 0.3s, transform 0.3s, box-shadow 0.3s;
+    }
+    .glass-card:hover {
+      border-color: rgba(201, 168, 76, 0.5);
+      transform: translateY(-6px);
+      box-shadow: 0 20px 60px rgba(201, 168, 76, 0.1);
+    }
+
+    /* SECTION 1: IMMERSIVE 3D HERO */
+    #hero-section {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      padding: 0;
+      overflow: hidden;
+    }
+    #hero-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+    }
+    .hero-content {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      max-width: 900px;
+      padding: 0 20px;
+    }
+    .badge-hero {
+      font-size: 10px;
+      color: var(--gold);
+      letter-spacing: 4px;
+      margin-bottom: 24px;
+      display: inline-block;
+    }
+    .hero-headline {
+      font-family: var(--font-display);
+      font-size: clamp(48px, 6vw, 96px);
+      font-weight: 900;
+      line-height: 0.9;
+      color: #fff;
+      margin-bottom: 24px;
+    }
+    .gold-gradient-text {
+      background: linear-gradient(90deg, #c9a84c, #e8c56d);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-subhead {
+      font-size: 14px;
+      color: var(--ice);
+      max-width: 520px;
+      margin: 0 auto 40px;
+      line-height: 1.6;
+    }
+    .hero-ctas {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+    }
+    .hero-ctas .btn-primary {
+      background: var(--gold);
+      color: var(--void);
+      border: 1px solid var(--gold);
+      padding: 16px 32px;
+      font-size: 12px;
+      letter-spacing: 1px;
+      cursor: pointer;
+      font-family: var(--font-mono);
+      transition: transform 0.2s, background 0.2s, box-shadow 0.2s;
+    }
+    .hero-ctas .btn-primary:hover {
+      background: var(--gold-bright);
+      transform: translateY(-2px);
+      box-shadow: 0 15px 35px rgba(201, 168, 76, 0.3);
+    }
+    .hero-ctas .btn-secondary {
+      background: transparent;
+      color: var(--gold);
+      border: 1px solid var(--gold);
+      padding: 16px 32px;
+      font-size: 12px;
+      letter-spacing: 1px;
+      cursor: pointer;
+      font-family: var(--font-mono);
+      transition: transform 0.2s, background 0.2s;
+    }
+    .hero-ctas .btn-secondary:hover {
+      background: rgba(201, 168, 76, 0.08);
+      transform: translateY(-2px);
+    }
+
+    /* HORIZONTAL TICKER */
+    .ticker-wrap {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: #030814;
+      border-top: 1px solid rgba(201, 168, 76, 0.1);
+      padding: 12px 0;
+      overflow: hidden;
+      z-index: 10;
+    }
+    .ticker-track {
+      display: flex;
+      width: max-content;
+      animation: scrollTicker 30s linear infinite;
+    }
+    .ticker-item {
+      padding: 0 40px;
+      font-size: 11px;
+      color: var(--gold);
+      white-space: nowrap;
+      letter-spacing: 1px;
+    }
+    @keyframes scrollTicker {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* SECTION 2: LIVE STATS COUNTER */
+    #stats-section {
+      background-color: var(--deep-navy);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      padding: 80px 8%;
+    }
+    .stat-card {
+      padding: 30px;
+      border-top: 3px solid var(--gold);
+      position: relative;
+    }
+    .stat-card:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: 20%;
+      height: 60%;
+      width: 1px;
+      background: var(--gold);
+      opacity: 0.15;
+    }
+    .stat-num {
+      font-family: var(--font-display);
+      font-size: 72px;
+      font-weight: 900;
+      line-height: 1;
+      margin-bottom: 12px;
+      background: linear-gradient(90deg, #c9a84c, #f5e4b0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .stat-label {
+      font-size: 11px;
+      letter-spacing: 3px;
+      color: var(--ice);
+      margin-bottom: 8px;
+    }
+    .stat-sub {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    /* SECTION 3: PROBLEM STATEMENT */
+    #problem-section {
+      background: var(--void);
+      display: flex;
+      gap: 6%;
+      align-items: flex-start;
+    }
+    .problem-left {
+      width: 50%;
+      position: sticky;
+      top: 140px;
+    }
+    .problem-left p {
+      font-size: 16px;
+      color: var(--text-secondary);
+      line-height: 1.8;
+      margin-bottom: 24px;
+    }
+    .problem-right {
+      width: 50%;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .accordion-item {
+      border-left: 2px solid var(--gold);
+      background: var(--glass);
+      transition: all 0.3s ease;
+    }
+    .accordion-header {
+      padding: 24px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .accordion-header h4 {
+      font-family: var(--font-display);
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    .accordion-header svg {
+      transition: transform 0.4s;
+      stroke: var(--gold);
+    }
+    .accordion-content {
+      max-height: 0;
+      overflow: hidden;
+      padding: 0 24px;
+      color: var(--text-secondary);
+      font-size: 14px;
+      line-height: 1.7;
+      transition: max-height 0.4s ease, padding 0.4s ease;
+    }
+    .accordion-item.active {
+      background: rgba(10, 22, 40, 0.82);
+    }
+    .accordion-item.active .accordion-header svg {
+      transform: rotate(90deg);
+    }
+    .accordion-item.active .accordion-content {
+      padding-bottom: 24px;
+    }
+
+    /* SECTION 4: SERVICES */
+    #services-section {
+      background: var(--deep-navy);
+    }
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 30px;
+    }
+    .services-grid .glass-card:nth-child(4) {
+      grid-column: 1 / 2; /* Adjust layout manually to push centered bottom cards or keep regular */
+    }
+    .services-grid .service-bottom-wrapper {
+      grid-column: span 3;
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-top: 30px;
+    }
+    .service-btn {
+      width: 500px;
+    }
+    .service-num {
+      font-size: 11px;
+      color: var(--gold);
+      opacity: 0.5;
+      margin-bottom: 20px;
+    }
+    .service-icon {
+      margin-bottom: 24px;
+    }
+    .service-title {
+      font-family: var(--font-display);
+      font-size: 28px;
+      color: var(--text-primary);
+      margin-bottom: 12px;
+    }
+    .service-desc {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+      line-height: 1.7;
+    }
+    .service-price {
+      font-size: 12px;
+      color: var(--gold);
+      margin-bottom: 20px;
+    }
+    .service-cta {
+      color: var(--gold);
+      text-decoration: none;
+      font-size: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: gap 0.3s;
+    }
+    .service-cta:hover {
+      gap: 14px;
+    }
+
+    /* SECTION 5: THE NEXUS STANDARD (HORIZONTAL TIMELINE) */
+    .standard-pin-container {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+      background: var(--void);
+      display: flex;
+      align-items: center;
+    }
+    .horizontal-scroll-track {
+      display: flex;
+      padding-left: 8%;
+      align-items: center;
+      width: max-content;
+      position: relative;
+    }
+    .horizontal-lines-bg {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 50%;
+      height: 2px;
+      background: rgba(201, 168, 76, 0.15);
+      z-index: 1;
+    }
+    .phase-card {
+      width: 320px;
+      height: 460px;
+      margin-right: 80px;
+      background: var(--glass);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      padding: 40px;
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+    .phase-card:hover, .phase-card.active {
+      transform: scale(1.03);
+      border-color: var(--gold);
+      box-shadow: 0 0 40px rgba(201, 168, 76, 0.2);
+    }
+    .phase-bg-num {
+      position: absolute;
+      top: 30px;
+      right: 30px;
+      font-family: var(--font-display);
+      font-size: 120px;
+      font-weight: 900;
+      color: var(--gold);
+      opacity: 0.06;
+      line-height: 0.8;
+      pointer-events: none;
+    }
+    .phase-name {
+      font-size: 10px;
+      color: var(--gold);
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+    .phase-icon {
+      margin-bottom: 60px;
+    }
+    .phase-desc {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    /* SECTION 6: FINANCIAL PROJECTIONS DASHBOARD */
+    #dashboard-section {
+      background: var(--void);
+    }
+    .dashboard-tabs {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      margin-bottom: 40px;
+    }
+    .tab-btn {
+      background: transparent;
+      border: 1px solid var(--glass-border);
+      color: var(--ice);
+      padding: 12px 24px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .tab-btn.active, .tab-btn:hover {
+      border-color: var(--gold);
+      color: var(--gold-bright);
+      background: rgba(201, 168, 76, 0.05);
+    }
+    .chart-panel-grid {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 40px;
+      margin-bottom: 40px;
+    }
+    .chart-panel {
+      min-height: 400px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .chart-title {
+      font-family: var(--font-display);
+      font-size: 24px;
+      color: var(--text-primary);
+      margin-bottom: 24px;
+      border-left: 2px solid var(--gold);
+      padding-left: 14px;
+    }
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+    .kpi-card {
+      text-align: center;
+    }
+    .kpi-card h5 {
+      font-size: 11px;
+      color: var(--ice);
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+    }
+    .kpi-num {
+      font-family: var(--font-display);
+      font-size: 40px;
+      font-weight: 700;
+      color: var(--gold);
+    }
+
+    /* SECTION 7: COMPETITIVE LANDSCAPE MATRIX */
+    #matrix-section {
+      background: var(--deep-navy);
+    }
+    .comparison-table-wrapper {
+      margin-top: 50px;
+      overflow-x: auto;
+    }
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+    .comparison-table th {
+      padding: 24px 16px;
+      font-size: 11px;
+      color: var(--ice);
+      letter-spacing: 2px;
+      border-bottom: 1px solid var(--glass-border);
+    }
+    .comparison-table td {
+      padding: 24px 16px;
+      font-size: 13px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      transition: background 0.3s;
+    }
+    .matrix-row {
+      cursor: crosshair;
+    }
+    .matrix-row:hover td {
+      background: rgba(10, 22, 40, 0.4);
+    }
+    .matrix-row.highlight {
+      background: rgba(201, 168, 76, 0.08);
+      font-weight: bold;
+    }
+    .matrix-row.highlight td {
+      border-top: 1px solid var(--gold);
+      border-bottom: 1px solid var(--gold);
+      color: var(--gold-pale);
+    }
+    .cell-icon {
+      font-size: 18px;
+    }
+    .cell-icon.check { color: var(--gold-bright); }
+    .cell-icon.times { color: #f25c5c; opacity: 0.5; }
+    .cell-icon.partial { color: #c9a84c; }
+
+    /* TOOLTIP */
+    #matrix-tooltip {
+      position: fixed;
+      display: none;
+      background: var(--void);
+      border: 1px solid var(--gold);
+      padding: 16px;
+      z-index: 1000;
+      max-width: 300px;
+      font-size: 12px;
+      color: var(--text-primary);
+      box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+      pointer-events: none;
+      backdrop-filter: blur(10px);
+    }
+
+    /* SECTION 8: REGULATORY TIMELINE */
+    #timeline-section {
+      background: var(--void);
+    }
+    .timeline-container {
+      position: relative;
+      max-width: 1000px;
+      margin: 60px auto 0;
+      padding: 40px 0;
+    }
+    .timeline-center-line {
+      position: absolute;
+      left: 50%;
+      top: 0;
+      width: 2px;
+      background: var(--gold);
+      transform: translateX(-50%);
+      z-index: 1;
+    }
+    .timeline-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      margin-bottom: 60px;
+      position: relative;
+      z-index: 2;
+    }
+    .timeline-item:nth-child(even) {
+      flex-direction: row-reverse;
+    }
+    .timeline-content-wrapper {
+      width: 45%;
+    }
+    .timeline-dot {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--void);
+      border: 2px solid var(--gold);
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .timeline-dot::after {
+      content: '';
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--gold-bright);
+      animation: pulsePulse 2s infinite;
+    }
+    @keyframes pulsePulse {
+      0% { transform: scale(1); opacity: 1; }
+      100% { transform: scale(1.6); opacity: 0; }
+    }
+    .timeline-card {
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      padding: 30px;
+    }
+    .timeline-date {
+      display: inline-block;
+      padding: 6px 14px;
+      background: rgba(201, 168, 76, 0.1);
+      border: 1px solid rgba(201, 168, 76, 0.3);
+      color: var(--gold-bright);
+      font-size: 11px;
+      margin-bottom: 12px;
+    }
+    .region-badge {
+      display: inline-block;
+      font-size: 9px;
+      padding: 3px 8px;
+      margin-left: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .region-eu { background: #003399; color: #fff; }
+    .region-us { background: #555555; color: #fff; }
+    .region-uk { background: #00247d; color: #fff; }
+    .region-apac { background: #008080; color: #fff; }
+
+    .timeline-title {
+      font-family: var(--font-display);
+      font-size: 22px;
+      color: #fff;
+      margin-bottom: 10px;
+    }
+    .rev-impact {
+      font-size: 12px;
+      color: var(--gold-pale);
+      font-style: italic;
+      margin-top: 10px;
+    }
+
+    /* SECTION 9: INTERACTIVE NEXUSIQ DEMO */
+    #platform-section {
+      background: var(--deep-navy);
+    }
+    .browser-frame {
+      border: 1px solid rgba(201, 168, 76, 0.2);
+      box-shadow: 0 40px 100px rgba(0,0,0,0.6);
+      background: var(--void);
+      display: flex;
+      min-height: 650px;
+      overflow: hidden;
+    }
+    .browser-sidebar {
+      width: 240px;
+      background: #030814;
+      border-right: 1px solid var(--glass-border);
+      padding: 30px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .sidebar-logo {
+      font-family: var(--font-display);
+      font-size: 20px;
+      color: var(--gold);
+      letter-spacing: 1px;
+      margin-bottom: 40px;
+      display: flex;
+      flex-direction: column;
+    }
+    .sidebar-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      color: var(--ice);
+      text-decoration: none;
+      font-size: 12px;
+      border-left: 2px solid transparent;
+      transition: all 0.3s;
+    }
+    .sidebar-link.active, .sidebar-link:hover {
+      background: rgba(201, 168, 76, 0.05);
+      border-left-color: var(--gold);
+      color: var(--gold-bright);
+    }
+    .browser-main {
+      flex: 1;
+      padding: 40px;
+      overflow-y: auto;
+    }
+    .mock-topbar {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 30px;
+      font-size: 12px;
+      color: var(--ice);
+    }
+    .widget-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 30px;
+    }
+    .p-widget {
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      padding: 24px;
+    }
+    .widget-header {
+      font-size: 12px;
+      color: var(--ice);
+      margin-bottom: 20px;
+      letter-spacing: 1px;
+      display: flex;
+      justify-content: space-between;
+    }
+    
+    /* GAUGE & MAP */
+    .gauge-container {
+      position: relative;
+      width: 180px;
+      height: 180px;
+      margin: 0 auto;
+    }
+    .gauge-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+    .gauge-num {
+      font-family: var(--font-display);
+      font-size: 48px;
+      font-weight: bold;
+      color: var(--gold-bright);
+      line-height: 1;
+    }
+    .alert-feed {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    .alert-item {
+      padding: 12px;
+      font-size: 11px;
+      border-left: 3px solid;
+      background: rgba(255,255,255,0.02);
+    }
+    .alert-high { border-color: #f25c5c; }
+    .alert-medium { border-color: var(--gold); }
+    .alert-info { border-color: #5ab1ff; }
+
+    /* SECTION 10: GO-TO-MARKET STRATEGY */
+    #gtm-section {
+      background: var(--void);
+    }
+    .gtm-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 40px;
+    }
+    .gtm-card {
+      position: relative;
+    }
+    .gtm-tactics {
+      margin-top: 24px;
+      list-style-type: none;
+    }
+    .gtm-tactics li {
+      margin-bottom: 12px;
+      font-size: 14px;
+      color: var(--text-secondary);
+      padding-left: 20px;
+      position: relative;
+    }
+    .gtm-tactics li::before {
+      content: '▪';
+      position: absolute;
+      left: 0;
+      color: var(--gold);
+    }
+
+    /* SECTION 11: FUNDING ROADMAP */
+    #funding-section {
+      background: var(--deep-navy);
+    }
+    .roadmap-track {
+      position: relative;
+      height: 4px;
+      background: rgba(201, 168, 76, 0.15);
+      margin: 80px 0 40px;
+    }
+    .roadmap-fill {
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      background: var(--gold);
+      width: 40%;
+    }
+    .roadmap-nodes {
+      display: flex;
+      justify-content: space-between;
+      position: absolute;
+      top: -10px;
+      left: 0;
+      width: 100%;
+    }
+    .road-node {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--void);
+      border: 2px solid var(--gold);
+      position: relative;
+      cursor: pointer;
+    }
+    .road-node.active .node-pulse {
+      position: absolute;
+      inset: -6px;
+      border: 1px solid var(--gold);
+      border-radius: 50%;
+      animation: pulsePulse 1.5s infinite;
+    }
+    .road-node-label {
+      position: absolute;
+      top: -30px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 10px;
+      color: var(--gold-bright);
+      white-space: nowrap;
+    }
+    .roadmap-detail-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 30px;
+      margin-top: 60px;
+    }
+    .funds-bullets {
+      margin-top: 14px;
+      list-style-type: none;
+    }
+    .funds-bullets li {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+
+    /* SECTION 12: TARGET SEGMENTS */
+    #segments-section {
+      background: var(--void);
+    }
+    .segments-scroll-wrapper {
+      display: flex;
+      gap: 30px;
+      overflow-x: auto;
+      padding-bottom: 30px;
+      scroll-snap-type: x mandatory;
+    }
+    .segment-card {
+      flex: 0 0 350px;
+      height: 480px;
+      perspective: 800px;
+      scroll-snap-align: start;
+    }
+    .segment-inner {
+      width: 100%;
+      height: 100%;
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      border-top: 3px solid var(--gold);
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.5s;
+    }
+    .segment-card:hover .segment-inner {
+      transform: rotateY(10deg) translateY(-8px);
+      border-color: var(--gold);
+      box-shadow: 0 20px 40px rgba(201, 168, 76, 0.15);
+    }
+    .segment-icon {
+      stroke: var(--gold);
+    }
+    .segment-spend {
+      font-family: var(--font-display);
+      font-size: 32px;
+      color: var(--gold-bright);
+      margin-bottom: 12px;
+    }
+    .tag-pill {
+      display: inline-block;
+      padding: 4px 10px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      font-size: 10px;
+      color: var(--ice);
+      margin: 2px;
+    }
+
+    /* SECTION 13: TEAM / LEADERSHIP */
+    #team-section {
+      background: var(--deep-navy);
+    }
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 40px;
+    }
+    .team-card {
+      text-align: center;
+      position: relative;
+    }
+    .team-avatar {
+      width: 120px;
+      height: 120px;
+      margin: 0 auto 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .team-name {
+      font-family: var(--font-display);
+      font-size: 24px;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+    .team-role {
+      font-size: 11px;
+      color: var(--gold);
+      margin-bottom: 14px;
+      letter-spacing: 1px;
+    }
+    .team-desc {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+    .kw-highlight {
+      color: var(--gold-pale);
+      font-weight: bold;
+    }
+
+    /* SECTION 14: 12-MONTH GANTT CHART */
+    #gantt-section {
+      background: var(--void);
+    }
+    .gantt-container {
+      overflow-x: auto;
+      margin: 40px 0;
+    }
+    .gantt-grid {
+      min-width: 900px;
+      display: grid;
+      grid-template-columns: 200px repeat(12, 1fr);
+      gap: 10px;
+    }
+    .gantt-hdr {
+      font-size: 10px;
+      color: var(--gold);
+      text-align: center;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--glass-border);
+      letter-spacing: 1px;
+    }
+    .gantt-row-label {
+      font-size: 11px;
+      color: var(--ice);
+      display: flex;
+      align-items: center;
+    }
+    .gantt-bar {
+      height: 32px;
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      color: var(--void);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .gantt-bar:hover {
+      transform: scaleY(1.1);
+      filter: brightness(1.2);
+    }
+    .gantt-detail-panel {
+      margin-top: 30px;
+      padding: 24px;
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      display: none;
+    }
+    .tag-gold { background: var(--gold); }
+    .tag-ice { background: var(--ice); }
+    .tag-plat { background: var(--platinum); }
+
+    /* SECTION 15: EXIT STRATEGY & VISION */
+    #vision-section {
+      background: var(--void);
+      text-align: center;
+      padding: 140px 8%;
+    }
+    .exit-columns {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 40px;
+      margin-bottom: 80px;
+    }
+    .exit-card {
+      border: 1px solid var(--glass-border);
+      background: rgba(10, 22, 40, 0.3);
+      padding: 40px;
+      text-align: left;
+    }
+    .exit-title {
+      font-family: var(--font-display);
+      font-size: 32px;
+      color: var(--gold-bright);
+      margin-bottom: 10px;
+    }
+    .vision-headline {
+      font-family: var(--font-display);
+      font-size: clamp(32px, 5vw, 56px);
+      font-weight: 900;
+      line-height: 1.1;
+      color: #fff;
+      max-width: 1000px;
+      margin: 0 auto 40px;
+    }
+
+    /* FOOTER */
+    footer {
+      background: var(--void);
+      border-top: 1px solid var(--gold);
+      padding: 80px 8% 40px;
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1.5fr;
+      gap: 60px;
+      margin-bottom: 60px;
+    }
+    .footer-col h5 {
+      font-family: var(--font-display);
+      font-size: 20px;
+      color: var(--gold);
+      margin-bottom: 24px;
+    }
+    .footer-links {
+      list-style-type: none;
+    }
+    .footer-links li {
+      margin-bottom: 12px;
+    }
+    .footer-links a {
+      color: var(--ice);
+      text-decoration: none;
+      font-size: 13px;
+      transition: color 0.3s;
+    }
+    .footer-links a:hover {
+      color: var(--gold);
+    }
+    .newsletter-form {
+      display: flex;
+    }
+    .newsletter-form input {
+      flex: 1;
+      background: var(--deep-navy);
+      border: 1px solid var(--glass-border);
+      padding: 12px 16px;
+      color: #fff;
+      font-family: var(--font-mono);
+      font-size: 13px;
+    }
+    .newsletter-form input:focus {
+      outline: none;
+      border-color: var(--gold);
+    }
+    .newsletter-form button {
+      background: var(--gold);
+      border: none;
+      padding: 0 24px;
+      color: var(--void);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,0.05);
+      padding-top: 30px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-secondary);
+    }
+
+    /* UTILITIES & RESPONSIVENESS */
+    @media (max-width: 1024px) {
+      .services-grid { grid-template-columns: repeat(2, 1fr); }
+      .services-grid .service-bottom-wrapper { grid-column: span 2; }
+      .chart-panel-grid { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 768px) {
+      header nav, header .btn-cert { display: none; }
+      .hamburger { display: flex; }
+      #stats-section { grid-template-columns: 1fr; }
+      #problem-section { flex-direction: column; }
+      .problem-left, .problem-right { width: 100%; }
+      .problem-left { position: relative; top: 0; margin-bottom: 40px; }
+      .services-grid { grid-template-columns: 1fr; }
+      .services-grid .service-bottom-wrapper { flex-direction: column; width: 100%; grid-column: span 1; }
+      .service-btn { width: 100%; }
+      .kpi-row { grid-template-columns: repeat(2, 1fr); }
+      .exit-columns { grid-template-columns: 1fr; }
+      .team-grid { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Custom Cursor & Scroll Progress -->
+  <div id="custom-cursor"></div>
+  <div id="scroll-progress"></div>
+
+  <!-- Loading Overlay -->
+  <div id="loader">
+    <h1>NEXUS</h1>
+    <div class="progress-track">
+      <div class="progress-bar"></div>
+    </div>
+  </div>
+
+  <!-- Header Navigation -->
+  <header id="main-header">
+    <div class="logo">
+      <span class="logo-main">NEXUS</span>
+      <span class="logo-sub">GOVERNANCE GROUP</span>
+    </div>
+    <nav>
+      <a href="#services-section" class="active">Services</a>
+      <a href="#platform-section">Platform</a>
+      <a href="#timeline-section">Methodology</a>
+      <a href="#matrix-section">Market</a>
+      <a href="#team-section">Company</a>
+    </nav>
+    <button class="btn-cert" onclick="window.location.hash='#platform-section'">Get Certified →</button>
+    <div class="hamburger" onclick="toggleMenu()">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </header>
+
+  <!-- Mobile Overlay Menu -->
+  <div id="mobile-menu">
+    <a href="#services-section" onclick="toggleMenu()">Services</a>
+    <a href="#platform-section" onclick="toggleMenu()">Platform</a>
+    <a href="#timeline-section" onclick="toggleMenu()">Methodology</a>
+    <a href="#matrix-section" onclick="toggleMenu()">Market</a>
+    <a href="#team-section" onclick="toggleMenu()">Company</a>
+  </div>
+
+  <!-- Main View Container -->
+  <main id="smooth-wrapper">
+    <div id="smooth-content">
+
+      <!-- SECTION 1: HERO OVERLAY -->
+      <section id="hero-section">
+        <canvas id="hero-canvas"></canvas>
+        <div class="hero-content">
+          <span class="badge-hero">NEXUS GOVERNANCE GROUP · EST. 2025</span>
+          <h1 class="hero-headline">
+            The World's<br>
+            <span class="gold-gradient-text">AI Governance</span><br>
+            Authority.
+          </h1>
+          <p class="hero-subhead">Every AI system your enterprise deploys is a regulatory exposure. We make it auditable, defensible, and certified.</p>
+          <div class="hero-ctas">
+            <button class="btn-primary" onclick="window.location.hash='#services-section'">Schedule Governance Audit →</button>
+            <button class="btn-secondary" onclick="window.location.hash='#platform-section'">Explore NexusIQ Platform</button>
+          </div>
+        </div>
+        <div class="ticker-wrap">
+          <div class="ticker-track" id="ticker-track">
+            <!-- Populated via JavaScript dynamically -->
+          </div>
+        </div>
+      </section>
+
+      <div class="divider" data-index="01"></div>
+
+      <!-- SECTION 2: LIVE STATS -->
+      <section id="stats-section">
+        <div class="stat-card">
+          <div class="stat-num" id="stat-num-1">42</div>
+          <div class="stat-label">MARKET SIZE BY 2030</div>
+          <div class="stat-sub">Fastest-growing compliance category</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="stat-num-2">127</div>
+          <div class="stat-label">NATIONS WITH AI LAWS</div>
+          <div class="stat-sub">Global regulatory coverage</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="stat-num-3">92</div>
+          <div class="stat-label">ENTERPRISES UNREADY</div>
+          <div class="stat-sub">Your immediate opportunity</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="stat-num-4">2.1</div>
+          <div class="stat-label">REGULATORY EXPOSURE</div>
+          <div class="stat-sub">EU AI Act + US EO + 125 more</div>
+        </div>
+      </section>
+
+      <div class="divider" data-index="02"></div>
+
+      <!-- SECTION 3: THE PROBLEM STATEMENT -->
+      <section id="problem-section">
+        <div class="problem-left">
+          <div class="section-title">
+            <div class="overline">THE PROBLEM</div>
+            <h2>AI has outpaced every governance system on Earth.</h2>
+          </div>
+          <p>Governments across the EU, US, UK, China, and 120+ nations are legislating artificial intelligence at speed. The EU AI Act carries catastrophic fines of up to €35 million or 7% of global sales.</p>
+          <p>This creates three structural, unsolved corporate hazards: auditing complex algorithm black boxes, managing non-deterministic reinforcement loops, and legally proving fairness to regional judicial boards.</p>
+        </div>
+        <div class="problem-right" id="problem-accordion">
+          <!-- Populated dynamically via JS -->
+        </div>
+      </section>
+
+      <div class="divider" data-index="03"></div>
+
+      <!-- SECTION 4: THE SERVICES -->
+      <section id="services-section">
+        <div class="section-title" style="text-align: center; margin: 0 auto 60px;">
+          <div class="overline">PRODUCT SUITE</div>
+          <h2>Institutional Systems & Audit Mechanics</h2>
+        </div>
+        <div class="services-grid" id="services-grid">
+          <!-- Rendered programmatically via JS -->
+        </div>
+      </section>
+
+      <div class="divider" data-index="04"></div>
+
+      <!-- SECTION 5: THE NEXUS STANDARD -->
+      <div class="standard-pin-container">
+        <div class="horizontal-scroll-track" id="horizontal-track">
+          <div class="horizontal-lines-bg"></div>
+          <!-- Populated dynamically via JS -->
+        </div>
+      </div>
+
+      <div class="divider" data-index="05"></div>
+
+      <!-- SECTION 6: FINANCIAL PROJECTIONS -->
+      <section id="dashboard-section">
+        <div class="section-title" style="text-align: center; margin: 0 auto 60px;">
+          <div class="overline">INSTITUTIONAL METRICS</div>
+          <h2>The Numbers That Build an Enterprise</h2>
+        </div>
+        <div class="dashboard-tabs">
+          <button class="tab-btn active" onclick="switchYear(5)">Year 5 Overview</button>
+          <button class="tab-btn" onclick="switchYear(4)">Year 4</button>
+          <button class="tab-btn" onclick="switchYear(3)">Year 3</button>
+          <button class="tab-btn" onclick="switchYear(2)">Year 2</button>
+          <button class="tab-btn" onclick="switchYear(1)">Year 1</button>
+        </div>
+        <div class="chart-panel-grid">
+          <div class="chart-panel glass-card">
+            <h4 class="chart-title">Revenue Trajectory Forecast</h4>
+            <div style="position:relative; width:100%; height:320px;">
+              <canvas id="revLineChart"></canvas>
+            </div>
+          </div>
+          <div class="chart-panel glass-card">
+            <h4 class="chart-title" id="doughnut-title">Year 5 Breakdown</h4>
+            <div style="position:relative; width:100%; height:260px;">
+              <canvas id="revDoughnutChart"></canvas>
+            </div>
+          </div>
+        </div>
+        <div class="kpi-row">
+          <div class="kpi-card glass-card">
+            <h5>GROSS MARGIN</h5>
+            <div class="kpi-num" id="kpi-margin">70%</div>
+          </div>
+          <div class="kpi-card glass-card">
+            <h5>PROJECTED EBITDA</h5>
+            <div class="kpi-num" id="kpi-ebitda">$61.5M</div>
+          </div>
+          <div class="kpi-card glass-card">
+            <h5>NEXUSIQ ARR</h5>
+            <div class="kpi-num" id="kpi-arr">$48.0M</div>
+          </div>
+          <div class="kpi-card glass-card">
+            <h5>ENTERPRISE CLIENTS</h5>
+            <div class="kpi-num" id="kpi-clients">420</div>
+          </div>
+        </div>
+      </section>
+
+      <div class="divider" data-index="06"></div>
+
+      <!-- SECTION 7: COMPETITIVE MATRIX -->
+      <section id="matrix-section">
+        <div class="section-title">
+          <div class="overline">BENCHMARKING</div>
+          <h2>Why Every Existing Solution Falls Short</h2>
+        </div>
+        <div class="comparison-table-wrapper">
+          <table class="comparison-table" id="competitor-table">
+            <thead>
+              <tr id="matrix-head">
+                <!-- Headings generated via JS -->
+              </tr>
+            </thead>
+            <tbody id="matrix-body">
+              <!-- Grid filled programmatically in active states -->
+            </tbody>
+          </table>
+        </div>
+        <div id="matrix-tooltip"></div>
+      </section>
+
+      <div class="divider" data-index="07"></div>
+
+      <!-- SECTION 8: REGULATORY TIMELINE -->
+      <section id="timeline-section">
+        <div class="section-title" style="text-align: center; margin: 0 auto 60px;">
+          <div class="overline">MARKET EVENTS</div>
+          <h2>Every Regulation is a Revenue Catalyst</h2>
+        </div>
+        <div class="timeline-container">
+          <div class="timeline-center-line"></div>
+          <div id="timeline-items-wrapper">
+            <!-- Timeline elements dynamically injected -->
+          </div>
+        </div>
+      </section>
+
+      <div class="divider" data-index="08"></div>
+
+      <!-- SECTION 9: NEXUSIQ PLATFORM WORKBENCH -->
+      <section id="platform-section">
+        <div class="section-title">
+          <div class="overline">INTERNAL PLATFORM DEMO</div>
+          <h2>NexusIQ — AI Governance. Always On.</h2>
+        </div>
+        <div class="browser-frame">
+          <div class="browser-sidebar">
+            <div class="sidebar-logo">
+              <span>NexusIQ</span>
+              <span style="font-size: 8px; color: var(--gold);">SECURE AUDITOR v2</span>
+            </div>
+            <a href="#" class="sidebar-link active">Dashboard</a>
+            <a href="#" class="sidebar-link">AI System Registry</a>
+            <a href="#" class="sidebar-link">Risk Monitoring</a>
+            <a href="#" class="sidebar-link">Federal Regulations</a>
+            <a href="#" class="sidebar-link">Automated Reports</a>
+            <a href="#" class="sidebar-link">Settings & API Keys</a>
+          </div>
+          <div class="browser-main">
+            <div class="mock-topbar">
+              <span>SECURE ACCESS ID: <strong>NX-808-VIRTUAL</strong></span>
+              <span>FEDERATED INTEGRITY STATUS: <strong style="color: var(--gold);">VERIFIED</strong></span>
+            </div>
+            <div class="widget-grid">
+              <div class="p-widget">
+                <div class="widget-header">
+                  <span>AI SYSTEM RISK INVENTORY</span>
+                  <span style="color: var(--gold);">98 ACTIVE AGENTS</span>
+                </div>
+                <div style="height: 180px;">
+                  <canvas id="platformRiskChart"></canvas>
+                </div>
+              </div>
+              <div class="p-widget" style="display:flex; flex-direction:column; justify-content:space-between;">
+                <div class="widget-header">
+                  <span>SECURITY & COMPLIANCE SCORE</span>
+                  <span style="color: var(--gold);">EU AI ACT THRESHOLD</span>
+                </div>
+                <div class="gauge-container">
+                  <svg width="180" height="180" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="40" fill="none" stroke="rgba(201,168,76,0.1)" stroke-width="8" stroke-dasharray="180 360" stroke-linecap="round" transform="rotate(-210 50 50)"/>
+                    <circle id="gauge-progress-circle" cx="50" cy="50" r="40" fill="none" stroke="var(--gold-bright)" stroke-width="8" stroke-dasharray="0 360" stroke-linecap="round" transform="rotate(-210 50 50)"/>
+                  </svg>
+                  <div class="gauge-text">
+                    <div class="gauge-num" id="gauge-val">87</div>
+                    <div style="font-size: 8px; color: var(--ice); letter-spacing: 1px;">COMPLIANCE</div>
+                  </div>
+                </div>
+                <div style="font-size: 11px; text-align: center; color: var(--text-secondary);">12 policy violations require review</div>
+              </div>
+              <div class="p-widget" style="grid-column: span 2;">
+                <div class="widget-header">
+                  <span>REAL-TIME AUDIT LOGS & ALERTS</span>
+                  <span style="color: var(--gold); cursor: pointer;" onclick="clearLogs()">CLEAR ALERTS</span>
+                </div>
+                <div class="alert-feed" id="alert-feed">
+                  <!-- Log alerts feed -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="divider" data-index="09"></div>
+
+      <!-- SECTION 10: GO-TO-MARKET -->
+      <section id="gtm-section">
+        <div class="section-title" style="text-align: center; margin: 0 auto 60px;">
+          <div class="overline">STRATEGIC CHANNELS</div>
+          <h2>The Path to Category Dominance</h2>
+        </div>
+        <div class="gtm-grid" id="gtm-grid-container">
+          <!-- Populated from JS -->
+        </div>
+      </section>
+
+      <div class="divider" data-index="10"></div>
+
+      <!-- SECTION 11: CAPITAL ROADMAP -->
+      <section id="funding-section">
+        <div class="section-title">
+          <div class="overline">FINANCING VEHICLES</div>
+          <h2>The Capital Architecture</h2>
+        </div>
+        <div class="roadmap-track">
+          <div class="roadmap-fill" id="roadmap-bar"></div>
+          <div class="roadmap-nodes" id="roadmap-nodes-box">
+            <!-- Nodes dynamically injected via JS -->
+          </div>
+        </div>
+        <div class="roadmap-detail-grid" id="funding-detail-grid">
+          <!-- Instantiated via JS -->
+        </div>
+      </section>
+
+      <div class="divider" data-index="11"></div>
+
+      <!-- SECTION 12: TARGET COMPLIANCE SEGMENTS -->
+      <section id="segments-section">
+        <div class="section-title">
+          <div class="overline">ADDRESSABLE CHANNELS</div>
+          <h2>Five Strategic Segments. One Global Standard.</h2>
+        </div>
+        <div class="segments-scroll-wrapper" id="segments-scroll-box">
+          <!-- Custom 3D segment cards -->
+        </div>
+      </section>
+
+      <div class="divider" data-index="12"></div>
+
+      <!-- SECTION 13: FOUNDING TEAM -->
+      <section id="team-section">
+        <div class="section-title" style="text-align: center; margin: 0 auto 60px;">
+          <div class="overline">THE TRUSTEES</div>
+          <h2>The Council That Builds Institutions</h2>
+        </div>
+        <div class="team-grid" id="team-container">
+          <!-- Filled from static datasets via JS -->
+        </div>
+      </section>
+
+      <div class="divider" data-index="13"></div>
+
+      <!-- SECTION 14: 12-MONTH GANTT PLAN -->
+      <section id="gantt-section">
+        <div class="section-title">
+          <div class="overline">TACTICAL BLUEPRINT</div>
+          <h2>12-Month Execution Roadmap</h2>
+        </div>
+        <div class="gantt-container" id="gantt-panel">
+          <!-- Rendered layout using flex/grid properties dynamically -->
+        </div>
+        <div class="gantt-detail-panel" id="gantt-detail-box">
+          <h4 id="gantt-d-title" style="color:var(--gold); margin-bottom:10px;">Select a Task to Render Detail Specs</h4>
+          <p id="gantt-d-desc" style="font-size:13px; color:var(--text-secondary);"></p>
+        </div>
+      </section>
+
+      <div class="divider" data-index="14"></div>
+
+      <!-- SECTION 15: EXIT AND CLOSING GALA -->
+      <section id="vision-section">
+        <div class="exit-columns" id="exit-blocks">
+          <!-- Injected dynamically via JS -->
+        </div>
+        <div class="vision-headline">"In 20 years, every significant artificial intelligence system deployed globally will carry a Nexus certificate."</div>
+        <div style="height:1px; width:150px; background:var(--gold); margin:30px auto;"></div>
+        <h5 style="letter-spacing: 6px; font-size:12px; color: var(--gold);">THE WORLD'S AI GOVERNANCE INFRASTRUCTURE</h5>
+      </section>
+
+      <!-- FOOTER -->
+      <footer>
+        <div class="footer-grid">
+          <div class="footer-col">
+            <h5 style="font-family:var(--font-display); font-size:24px;">NEXUS</h5>
+            <p style="font-size:13px; color:var(--text-secondary); margin-bottom:20px; max-width:400px;">The world's most trusted AI governance and system safety accreditation framework.</p>
+            <div style="display:flex; gap:16px;">
+              <svg width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37zM17.5 6.5h.01"/></svg>
+              <svg width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
+            </div>
+          </div>
+          <div class="footer-col">
+            <h5 style="font-size:14px; letter-spacing:1px; margin-bottom:16px;">Core Portables</h5>
+            <ul class="footer-links">
+              <li><a href="#services-section">Governance Audits</a></li>
+              <li><a href="#platform-section">NexusIQ SaaS</a></li>
+              <li><a href="#timeline-section">CAIGP Training</a></li>
+              <li><a href="#timeline-section">Advisory Councils</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h5 style="font-size:14px; letter-spacing:1px; margin-bottom:16px;">Company</h5>
+            <ul class="footer-links">
+              <li><a href="#team-section">Leadership Council</a></li>
+              <li><a href="#gtm-section">Security Protocols</a></li>
+              <li><a href="#matrix-section">Market Position</a></li>
+              <li><a href="#timeline-section">Regulatory Reports</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h5 style="font-size:14px; letter-spacing:1px; margin-bottom:16px;">Subscribe to Intelligence</h5>
+            <div class="newsletter-form">
+              <input type="email" placeholder="auditor@governance.net" id="news-email">
+              <button onclick="subscribeEmail()">Subscribe</button>
+            </div>
+            <div id="sub-feedback" style="margin-top:10px; font-size:12px; color:var(--gold);"></div>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <span>© 2025 Nexus Governance Group. All Rights Reserved. · Privacy Policy · Terms of Service · Cookie Policy</span>
+          <span>SYSTEM ACCELERATION: ACTIVE</span>
+        </div>
+      </footer>
+
+    </div>
+  </main>
+
+  <!-- DATASETS AND MASTER SCRIPT -->
+  <script>
+    // -------------------------------------------------------------
+    // DATA LAYER (Single source of truth)
+    // -------------------------------------------------------------
+    const APP_DATA = {
+      tickerItems: [
+        "$42B Market by 2030", "EU AI Act Compliance Active", "127 Nations Legislating Core AI Standards",
+        "$2.1T General Indemnity fine risk", "92% Global Enterprise Readiness deficit", "ISO 42001 Certification Enforced",
+        "Strategic Drift Monitoring Activated", "NEXUS Core Methodology 1.0 Passed Review"
+      ],
+      accordionProblems: [
+        { title: "Auditability Gap", short: "87% cannot produce audit trails", desc: "Enterprise operations deploy neural structures without historical version tracing, generating non-reproducible operational drifts." },
+        { title: "Explainability Deficit", short: "79% of systems remain black boxes", desc: "No executive board can define exactly why deep networks arrived at credit-decision or hiring filters during audits." },
+        { title: "Bias & Fairness Risk", short: "61% faced discriminator flags", desc: "Learning algorithms propagate systemic data biases, provoking operational liability under state compliance decrees." },
+        { title: "Documentation Chaos", short: "0 Standardized model structures on disk", desc: "Engineers generate disparate logs with no centralized structural templates or persistent regulatory checklists." },
+        { title: "Executive Ignorance", short: "74% of boards misunderstand technical vectors", desc: "Institutional oversight committees are structurally insulated from complex system hazards, resulting in systemic leadership liabilities." },
+        { title: "Third-Party Vendor Risk", short: "Zero systemic checks for external vendors", desc: "External integrations introduce untracked models directly into enterprise networks without formal validation reviews." },
+        { title: "No Universal Standard", short: "Zero accepted global certifications", desc: "No unified institutional seal exists to attest conformity to cross-border agencies before today." }
+      ],
+      services: [
+        { index: "01", category: "Audit & Assurances", title: "AI GOVERNANCE AUDIT", desc: "Methodology-driven deep physical and mechanical risk audit. Formal Nexus Core Certificate issued.", price: "$25K–$450K per engagement" },
+        { index: "02", category: "Secure SaaS Monitor", title: "NEXUSIQ SUITE", desc: "Continuous oversight software. Monitors data drifts, tracks standard models, manages compliance rules.", price: "$1,500–$20,000/month" },
+        { index: "03", category: "Training & Credentials", title: "CAIGP FELLOWSHIPS", desc: "The institutional benchmark for technical compliance experts. Three tiers of mastery track.", price: "$1,500–$7,500 per seat" },
+        { index: "04", category: "Board Advisory", title: "EXECUTIVE DIRECTIVES", desc: "Fiduciary liability workshops for compliance directors. Minimizes institutional risk variables.", price: "$25,000–$85,000 per session" },
+        { index: "05", category: "Regulatory Counsel", title: "REMEDIATION DEFENSE", desc: "Accredited technical expert testimony, forensic analyses, and immediate mitigation ledgers.", price: "$500–$1,500/hour" }
+      ],
+      methodologyPhases: [
+        { num: "01", name: "DISCOVERY", desc: "Deep automated cataloging of internal systems via network sniffing and database analysis." },
+        { num: "02", name: "STRATIFICATION", desc: "Classification matrices parsing over 240 distinct ethical and financial risk variables." },
+        { num: "03", name: "SYSTEM TESTING", desc: "Technically probing model boundaries for fairness, bias drifts, and structural robustness." },
+        { num: "04", name: "HUMAN OVERSIGHT", desc: "Institutional qualitative audit validating executive workflows, controls, and team compliance." },
+        { num: "05", name: "MAP MAPPING", desc: "Translating technical vulnerabilities into explicit legal liabilities across target nations." },
+        { num: "06", name: "ACCREDITATION", desc: "Formal presentation to the board and release of the official Nexus Seals." },
+        { num: "07", name: "CONTINUOUS REVIEW", desc: "Persistent automated governance reporting with telemetry dashboards post-engagement." }
+      ],
+      competition: {
+        cols: ["Competitors", "Technical Audit", "Legal Safeguards", "SaaS Automation", "State Recognition", "Global Presence", "Seal Issuance", "Continuous Alerts"],
+        rows: [
+          { comp: "Big 4 Consulting", cells: ["◑", "✓", "✗", "◑", "✓", "✗", "✗"], gap: "Manual checklists without code inspection or real-time telemetry." },
+          { comp: "GRC Software Platforms", cells: ["✗", "✗", "✓", "✗", "◑", "✗", "◑"], gap: "Lacks core deep-learning explainability mechanics or algorithmic evaluation capability." },
+          { comp: "AI Ethics Consultancies", cells: ["◑", "✗", "✗", "✗", "✗", "✗", "✗"], gap: "Highly abstract ethical papers completely detached from concrete corporate liability frameworks." },
+          { comp: "Traditional Law Offices", cells: ["✗", "✓", "✗", "◑", "◑", "✗", "✗"], gap: "Pure, static drafting of terms. Absolutely no tech stack monitoring vectors." },
+          { comp: "NEXUS GOVERNANCE", cells: ["✓", "✓", "✓", "✓", "✓", "✓", "✓"], gap: "Global complete end-of-turn standard representing the true pinnacle of trust." }
+        ]
+      },
+      timeline: [
+        { date: "2025 Q2", title: "EU AI Act Band Prohibitions", region: "eu", imp: "Demands immediate algorithmic containment assessments." },
+        { date: "2025 Q3", title: "SEC Compliance Directives", region: "us", imp: "Corporate boards must catalog and state all active models on sheets." },
+        { date: "2025 Q4", title: "GPAI Verification Acts", region: "eu", imp: "Model providers demand certified audits before distributing tokens." },
+        { date: "2026 Q1", title: "High-Risk Pipeline Mandates", region: "us", imp: "Biometric and medical sectors receive system lockouts if unapproved." },
+        { date: "2026 Q3", title: "APAC Shared Frameworks", region: "apac", imp: "Cross-border regulatory overlap spikes audit workloads 240%." },
+        { date: "2027 H1", title: "EU Conformity Assessments", region: "eu", imp: "Third-party certification becomes an absolute regulatory prerequisite." }
+      ],
+      financials: {
+        5: { total: "$205M", margin: "70%", ebitda: "$61.5M", arr: "$48M", clients: "420", data: [42, 48, 35, 18, 28, 12, 22] },
+        4: { total: "$118M", margin: "68%", ebitda: "$32.4M", arr: "$28M", clients: "280", data: [26, 28, 22, 11, 15, 7, 9] },
+        3: { total: "$60.9M", margin: "65%", ebitda: "$14.6M", arr: "$14M", clients: "150", data: [15, 14, 10, 6, 7, 4, 4.9] },
+        2: { total: "$22.2M", margin: "60%", ebitda: "$4.1M", arr: "$4.5M", clients: "65", data: [6.2, 4.5, 3.2, 2.1, 2.4, 1.8, 2] },
+        1: { total: "$5.3M", margin: "55%", ebitda: "$0.4M", arr: "$0.8M", clients: "20", data: [1.8, 0.8, 0.5, 0.6, 0.4, 0.8, 0.4] }
+      },
+      gtm: [
+        { label: "PHASE 1", title: "CATEGORY BREED", list: ["Deploy regulatory standard indices globally", "Partner with federal AI advisory chambers", "Position elite CAIGP master credentials", "Launch NexusIQ sandbox frameworks to devs", "Host national summits on algorithmic risk"] },
+        { label: "PHASE 2", title: "WHITE-LABEL CHANNEL SCALE", list: ["Integrate Nexus standard into Big 4 delivery models", "Deploy enterprise enterprise-grade APIs", "Deploy direct-to-auditor pipelines", "Build deep legal-defense system packages", "Initiate sovereign agency pilot studies"] },
+        { label: "PHASE 3", title: "ACCUMULATIVE SEALS", list: ["Mandate certification across major Cloud registries", "Continuous telemetry monitors model fleets", "Become standard baseline of Lloyd's AI risk policies", "Establish deep global rating bureau standards", "Integrate regulatory alerts instantly into core systems"] }
+      ],
+      funding: [
+        { round: "PRE-SEED", amount: "$2M", time: "Closed", bullets: ["Refine Core Compliance Engine", "Appoint Core Advisory Fellows"], vcs: "Sutter Hill, Boldstart" },
+        { round: "SEED", amount: "$8M", time: "Active", bullets: ["Incorporate NexusIQ Web Panel", "First 15 Fortune 500 pilots"], vcs: "Sequoia, First Round" },
+        { round: "SERIES A", amount: "$35M", time: "Target Q4", bullets: ["Initiate partner systems scale", "Incorporate regional global offices"], vcs: "a16z, Bessemer" },
+        { round: "SERIES B", amount: "$80M", time: "Year 3 Plan", bullets: ["Federal sovereign partnerships", "General indemnity protection funding"], vcs: "General Catalyst, SEC" }
+      ],
+      segments: [
+        { num: "01", title: "LARGE ENTERPRISE", spend: "$500K-$5M", tag: "Fortune 2000", tag2: "Financial/Health", buyer: "Board Risk, Chief Legal" },
+        { num: "02", title: "MID-MARKET", spend: "$50K-$500K", tag: "$50M-$1B Sales", tag2: "Tech/Logistics", buyer: "VPs of Product, compliance heads" },
+        { num: "03", title: "SOVEREIGN AGENCIES", spend: "$1M-$20M", tag: "Governments", tag2: "Defence/Civil", buyer: "Procurement directors" },
+        { num: "04", title: "AI MODEL DEVELOPERS", spend: "$200K-$3M", tag: "Labs & Foundational", tag2: "ML Devops", buyer: "CSOs, chief researchers" },
+        { num: "05", title: "ADVISORY SEALS", spend: "$5M-$50M", tag: "SIs & Consultants", tag2: "White-label scale", buyer: "System Integrator Lead Partners" }
+      ],
+      team: [
+        { role: "CEO", name: "Alistair Sterling", desc: "Former Senior Managing Partner at <span class='kw-highlight'>McKinsey</span>. Decades advising FTSE 100 on regulatory risk vectors." },
+        { role: "CHIEF SCIENCE OFFICER", name: "Dr. Elena Vardan", desc: "PhD in Neural Fairness. Former Lead Ethics Architect at <span class='kw-highlight'>DeepMind</span> and OpenAI advisor." },
+        { role: "CHIEF COMPLIANCE COUNSEL", name: "Marcus Thorne Esq.", desc: "Former Director of Regulatory Advisory at the <span class='kw-highlight'>FTC</span>. Framed several algorithmic rules." },
+        { role: "CHIEF REVENUE OFFICER", name: "Clarissa Vance", desc: "Scale expert. Ex-Enterprise Director at <span class='kw-highlight'>Palantir</span>, driving $800M in federal pipelines." },
+        { role: "CHIEF TECHNOLOGY OFFICER", name: "David Kael PhD", desc: "SaaS architect. Developed federated security pipelines for <span class='kw-highlight'>Microsoft Dynamics</span> systems." },
+        { role: "MANAGING DIRECTOR (EUROPE)", name: "Jean-Louis Dubois", desc: "Former European Commission <span class='kw-highlight'>AI High-Level Group</span> member. Standard coordinator." }
+      ],
+      gantt: [
+        { label: "Legal/Inc", title: "Sovereign Framework Structuring", css: "tag-plat", mStart: 1, mLen: 3, desc: "Incorporate jurisdictional legal vehicles in Delaware and London. Standardize framework indemnity clauses." },
+        { label: "Methodology", title: "Audit Checklist Core Draft", css: "tag-gold", mStart: 2, mLen: 4, desc: "Formulate the 240 evaluation criteria. Standardize metrics with EU AI Act High-Risk systems." },
+        { label: "Technology", title: "NexusIQ Core Dashboard Beta", css: "tag-ice", mStart: 4, mLen: 5, desc: "Launch client panel, integrating federated pipeline monitoring and automated drift checks." },
+        { label: "Sales", title: "Fortune 2000 Pipeline Capture", css: "tag-gold", mStart: 6, mLen: 5, desc: "Launch high-intensity outbound campaigns targeting institutional financial compliance heads." },
+        { label: "Partners", title: "Big Four Co-Selling Program", css: "tag-plat", mStart: 8, mLen: 4, desc: "Incorporate Nexus seals directly as audit steps for international advisory pipelines." },
+        { label: "Hiring", title: "Advisory & Research Expansion", css: "tag-ice", mStart: 3, mLen: 4, desc: "Deploy technical auditors and ML validation scholars to regional headquarters." }
+      ],
+      exits: [
+        { letter: "A", name: "IPO TRACK", val: "$3B+ Valuation", desc: "Formally list on NYSE within Year 6. Position Nexus as the global legal credit standard of artificial intelligence." },
+        { letter: "B", name: "STRATEGIC TRADE M&A", val: "$2B–$5B Value", desc: "Exit to Big Four accounting systems or rating bureaus like Moody’s and S&P Global to create trust frameworks." },
+        { letter: "C", name: "PRIVATE EQUITY LBO", val: "$1.5B+ Recap", desc: "Leverage reliable SaaS metrics and continuous audit ARR for major control buys by Thoma Bravo or Vista Partners." }
+      ]
+    };
+
+    // -------------------------------------------------------------
+    // SETUP STATIC GRID RENDERS (Vanilla JS Pipeline)
+    // -------------------------------------------------------------
+    function buildDynamicContent() {
+      // 1. Ticker Items
+      const ticker = document.getElementById('ticker-track');
+      let tickerHTML = '';
+      const listToRender = [...APP_DATA.tickerItems, ...APP_DATA.tickerItems];
+      listToRender.forEach(item => {
+        tickerHTML += `<div class="ticker-item">${item}</div>`;
+      });
+      ticker.innerHTML = tickerHTML;
+
+      // 2. Accordion Items
+      const accordion = document.getElementById('problem-accordion');
+      accordion.innerHTML = APP_DATA.accordionProblems.map((prob, idx) => `
+        <div class="accordion-item ${idx===0?'active':''}" onclick="toggleAccordion(this)">
+          <div class="accordion-header">
+            <h4>${prob.title} — <span style="font-size:14px; color:var(--gold);">${prob.short}</span></h4>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" class="feather feather-chevron-right" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </div>
+          <div class="accordion-content" style="${idx===0?'max-height:100px;':''}">
+            <p>${prob.desc}</p>
+          </div>
+        </div>
+      `).join('');
+
+      // 3. Services Grid
+      const sGrid = document.getElementById('services-grid');
+      let servicesHTML = '';
+      for (let i = 0; i < 3; i++) {
+        const serv = APP_DATA.services[i];
+        servicesHTML += renderServiceCard(serv);
+      }
+      servicesHTML += `<div class="service-bottom-wrapper">`;
+      for (let i = 3; i < 5; i++) {
+        const serv = APP_DATA.services[i];
+        servicesHTML += renderServiceCard(serv, true);
+      }
+      servicesHTML += `</div>`;
+      sGrid.innerHTML = servicesHTML;
+
+      // 4. Horizontal Phase Flow Card Track
+      const track = document.getElementById('horizontal-track');
+      track.innerHTML += APP_DATA.methodologyPhases.map((phase, idx) => `
+        <div class="phase-card ${idx===0?'active':''}" onclick="selectPhase(this)">
+          <div class="phase-bg-num">${phase.num}</div>
+          <div>
+            <div class="phase-name">PHASE ${phase.num}</div>
+            <h4 style="font-family:var(--font-display); font-size:24px; color:#fff; margin-bottom:20px;">${phase.name}</h4>
+          </div>
+          <div class="phase-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5">
+              <polygon points="12 2 2 7 12 12 22 7 12 2" />
+              <polyline points="2 17 12 22 22 17" />
+              <polyline points="2 12 12 17 22 12" />
+            </svg>
+          </div>
+          <p class="phase-desc">${phase.desc}</p>
+        </div>
+      `).join('');
+
+      // 5. Matrix Table Render
+      const hTR = document.getElementById('matrix-head');
+      hTR.innerHTML = APP_DATA.competition.cols.map(c => `<th>${c}</th>`).join('');
+      const bTR = document.getElementById('matrix-body');
+      bTR.innerHTML = APP_DATA.competition.rows.map(r => `
+        <tr class="matrix-row ${r.comp.includes('NEXUS')?'highlight':''}" data-competitor="${r.comp}" data-gap="${r.gap}">
+          <td style="border-left: 2px solid ${r.comp.includes('NEXUS')?'var(--gold)':'transparent'}; padding-left:14px; font-weight:bold;">${r.comp}</td>
+          ${r.cells.map(c => `
+            <td style="text-align:center;"><span class="cell-icon ${c==='✓'?'check':c==='✗'?'times':'partial'}">${c}</span></td>
+          `).join('')}
+        </tr>
+      `).join('');
+
+      // 6. Timeline Map Injections
+      const timelineBox = document.getElementById('timeline-items-wrapper');
+      timelineBox.innerHTML = APP_DATA.timeline.map(item => `
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content-wrapper">
+            <div class="timeline-card glass-card">
+              <div class="timeline-date">${item.date} <span class="region-badge region-${item.region}">${item.region}</span></div>
+              <h3 class="timeline-title">${item.title}</h3>
+              <div class="rev-impact">REVENUE CATALYST: ${item.imp}</div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+      // 7. GTM columns
+      const gtmContainer = document.getElementById('gtm-grid-container');
+      gtmContainer.innerHTML = APP_DATA.gtm.map(col => `
+        <div class="gtm-card glass-card">
+          <div style="font-size:10px; color:var(--gold); letter-spacing:4px; margin-bottom:10px;">${col.label}</div>
+          <h3 style="font-family:var(--font-display); font-size:28px; color:#fff; margin-bottom:20px;">${col.title}</h3>
+          <ul class="gtm-tactics">
+            ${col.list.map(li => `<li>${li}</li>`).join('')}
+          </ul>
+        </div>
+      `).join('');
+
+      // 8. Roadmap Nodes
+      const barNodes = document.getElementById('roadmap-nodes-box');
+      barNodes.innerHTML = APP_DATA.funding.map((f, idx) => `
+        <div class="road-node ${idx===1?'active':''}" onclick="highlightRoadmap(${idx})" style="left: ${idx * 33}%;">
+          <div class="node-pulse"></div>
+          <div class="road-node-label">${f.round}</div>
+        </div>
+      `).join('');
+
+      const detailGrid = document.getElementById('funding-detail-grid');
+      detailGrid.innerHTML = APP_DATA.funding.map((f, idx) => `
+        <div class="road-detail-card glass-card" id="road-detail-${idx}" style="transition: all 0.3s; opacity: ${idx===1? 1 : 0.4};">
+          <h4 style="color:var(--gold); font-size:14px; margin-bottom:10px;">${f.round} VOLUME</h4>
+          <div style="font-family:var(--font-display); font-size:36px; font-weight:bold; color:#fff; margin-bottom:8px;">${f.amount}</div>
+          <div style="font-size:11px; color:var(--ice); margin-bottom:14px;">TIMELINE: ${f.time}</div>
+          <p style="font-size:12px; color:var(--ice); font-weight:bold;">Primary Allocations:</p>
+          <ul class="funds-bullets">
+            ${f.bullets.map(b => `<li>• ${b}</li>`).join('')}
+          </ul>
+          <div style="font-size:11px; color:var(--gold); margin-top:20px;">TARGETS: ${f.vcs}</div>
+        </div>
+      `).join('');
+
+      // 9. Segments
+      const segBox = document.getElementById('segments-scroll-box');
+      segBox.innerHTML = APP_DATA.segments.map(seg => `
+        <div class="segment-card">
+          <div class="segment-inner">
+            <div>
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
+                <span style="font-size:11px; color:var(--gold); font-family:var(--font-mono);">${seg.num}</span>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="segment-icon">
+                  <polygon points="12 2 2 7 12 12 22 7 12 2" />
+                  <polyline points="2 17 12 22 22 17" />
+                  <polyline points="2 12 12 17 22 12" />
+                </svg>
+              </div>
+              <h4 style="font-family:var(--font-display); font-size:24px; color:#fff; margin-bottom:10px;">${seg.title}</h4>
+              <div class="segment-spend">${seg.spend}</div>
+            </div>
+            <div>
+              <div style="margin-bottom:14px;">
+                <span class="tag-pill">${seg.tag}</span>
+                <span class="tag-pill">${seg.tag2}</span>
+              </div>
+              <div style="font-size:11px; color:var(--text-secondary);">DECISION BUYER: <span style="color:var(--gold);">${seg.buyer}</span></div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+      // 10. Team Grid
+      const teamBox = document.getElementById('team-container');
+      teamBox.innerHTML = APP_DATA.team.map(member => `
+        <div class="team-card glass-card">
+          <div class="team-avatar">
+            <svg width="60" height="60" viewBox="0 0 100 100">
+              <polygon points="50,5 93,30 93,80 50,95 7,80 7,30" fill="none" stroke="var(--gold)" stroke-width="1" />
+              <polygon points="50,15 83,35 83,72 50,85 17,72 17,35" fill="none" stroke="rgba(201,168,76,0.3)" stroke-width="1" />
+            </svg>
+          </div>
+          <h4 class="team-name">${member.name}</h4>
+          <div class="team-role">${member.role}</div>
+          <p class="team-desc">${member.desc}</p>
+        </div>
+      `).join('');
+
+      // 11. Gantt Chart Layout (Responsive grid tasks mapping)
+      const ganttBox = document.getElementById('gantt-panel');
+      let ganttHTML = `
+        <div class="gantt-grid">
+          <div class="gantt-hdr" style="text-align:left;">WORKSTREAM</div>
+          ${Array.from({length:12}, (_, i) => `<div class="gantt-hdr">M${i+1}</div>`).join('')}
+      `;
+      APP_DATA.gantt.forEach((g, idx) => {
+        ganttHTML += `
+          <div class="gantt-row-label">${g.label}</div>
+          <div style="grid-column: span 12; display:grid; grid-template-columns: repeat(12, 1fr);">
+            <div style="grid-column: ${g.mStart} / span ${g.mLen};" class="gantt-bar ${g.css}" onclick="loadGanttDetail(${idx})">
+              ${g.title}
+            </div>
+          </div>
+        `;
+      });
+      ganttHTML += `</div>`;
+      ganttBox.innerHTML = ganttHTML;
+
+      // 12. Exit Strategy
+      const exitBox = document.getElementById('exit-blocks');
+      exitBox.innerHTML = APP_DATA.exits.map(ex => `
+        <div class="exit-card glass-card">
+          <div style="font-family:var(--font-display); font-size:24px; color:var(--gold); margin-bottom:14px;">PATH ${ex.letter}</div>
+          <h4 class="exit-title">${ex.name}</h4>
+          <div style="font-family:var(--font-mono); color:#fff; font-size:18px; margin-bottom:14px;">${ex.val}</div>
+          <p style="font-size:13px; color:var(--text-secondary); line-height:1.6;">${ex.desc}</p>
+        </div>
+      `).join('');
+    }
+
+    function renderServiceCard(serv, isBt = false) {
+      return `
+        <div class="glass-card ${isBt?'service-btn':''}">
+          <div class="service-num">${serv.index}</div>
+          <div class="service-icon">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+              <line x1="9" y1="3" x2="9" y2="21" />
+              <line x1="15" y1="3" x2="15" y2="21" />
+              <line x1="3" y1="9" x2="21" y2="9" />
+              <line x1="3" y1="15" x2="21" y2="15" />
+            </svg>
+          </div>
+          <div style="font-size:10px; color:var(--gold); letter-spacing:2px; text-transform:uppercase; margin-bottom:10px;">${serv.category}</div>
+          <h3 class="service-title">${serv.title}</h3>
+          <p class="service-desc">${serv.desc}</p>
+          <div class="service-price">FEE STRUCTURE: ${serv.price}</div>
+          <a href="#platform-section" class="service-cta">Learn More →</a>
+        </div>
+      `;
+    }
+
+    // Interactive Handlers
+    function toggleAccordion(elem) {
+      const active = document.querySelector('.accordion-item.active');
+      if (active && active !== elem) {
+        active.classList.remove('active');
+        active.querySelector('.accordion-content').style.maxHeight = '0';
+      }
+      elem.classList.toggle('active');
+      const content = elem.querySelector('.accordion-content');
+      if (elem.classList.contains('active')) {
+        content.style.maxHeight = content.scrollHeight + 'px';
+      } else {
+        content.style.maxHeight = '0';
+      }
+    }
+
+    function selectPhase(elem) {
+      document.querySelectorAll('.phase-card').forEach(c => c.classList.remove('active'));
+      elem.classList.add('active');
+    }
+
+    function highlightRoadmap(activeIndex) {
+      document.querySelectorAll('.road-node').forEach((n, idx) => {
+        if(idx === activeIndex) n.classList.add('active');
+        else n.classList.remove('active');
+      });
+      document.querySelectorAll('.road-detail-card').forEach((card, idx) => {
+        if(idx === activeIndex) {
+          card.style.opacity = 1;
+          card.style.transform = 'scale(1.02)';
+        } else {
+          card.style.opacity = 0.4;
+          card.style.transform = 'scale(1)';
+        }
+      });
+      const percent = activeIndex * 33.3;
+      document.getElementById('roadmap-bar').style.width = percent + '%';
+    }
+
+    function loadGanttDetail(index) {
+      const task = APP_DATA.gantt[index];
+      const panel = document.getElementById('gantt-detail-box');
+      panel.style.display = 'block';
+      document.getElementById('gantt-d-title').innerText = `${task.title} (Duration: Months ${task.mStart} - ${task.mStart+task.mLen})`;
+      document.getElementById('gantt-d-desc').innerText = task.desc;
+      gsap.fromTo(panel, { opacity:0, y:10 }, { opacity:1, y:0, duration:0.4 });
+    }
+
+    // -------------------------------------------------------------
+    // THREE.JS ANIMATED ENVIRONMENT (Hero Scene Background)
+    // -------------------------------------------------------------
+    let scene, camera, renderer, icosahedron, stars, torusRings = [];
+    let targetCameraX = 0, targetCameraY = 0;
+
+    function initThree() {
+      const canvasContainer = document.getElementById('hero-section');
+      const canvasElement = document.getElementById('hero-canvas');
+      
+      scene = new THREE.Scene();
+      camera = new THREE.PerspectiveCamera(60, canvasContainer.clientWidth / canvasContainer.clientHeight, 0.1, 100);
+      camera.position.z = 10;
+
+      renderer = new THREE.WebGLRenderer({ canvas: canvasElement, alpha: true, antialias: true });
+      renderer.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+      // Light Structures
+      const ambientLight = new THREE.AmbientLight(0x1a2a4a, 0.7);
+      scene.add(ambientLight);
+
+      const pointLight = new THREE.PointLight(0xc9a84c, 2, 50);
+      pointLight.position.set(5, 5, 5);
+      scene.add(pointLight);
+
+      // Gold Core Icosahedron Wireframe
+      const geom = new THREE.IcosahedronGeometry(2.3, 1);
+      const edges = new THREE.EdgesGeometry(geom);
+      const lineMaterial = new THREE.LineBasicMaterial({ color: 0xc9a84c, transparent: true, opacity: 0.4 });
+      icosahedron = new THREE.LineSegments(edges, lineMaterial);
+      scene.add(icosahedron);
+
+      // Star Particles drift
+      const particleCount = window.innerWidth < 768 ? 300 : 800;
+      const starGeometry = new THREE.BufferGeometry();
+      const positions = new Float32Array(particleCount * 3);
+      for (let i = 0; i < particleCount; i++) {
+        positions[i*3] = (Math.random() - 0.5) * 40;
+        positions[i*3+1] = (Math.random() - 0.5) * 30;
+        positions[i*3+2] = (Math.random() - 0.5) * 40;
+      }
+      starGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      const starMaterial = new THREE.PointsMaterial({ color: 0xc9a84c, size: 0.06, transparent: true, opacity: 0.8 });
+      stars = new THREE.Points(starGeometry, starMaterial);
+      scene.add(stars);
+
+      // Rotating Torus Rings
+      if(window.innerWidth >= 768) {
+        const ringRadii = [3.4, 4.6, 5.8];
+        ringRadii.forEach(r => {
+          const torusGeom = new THREE.TorusGeometry(r, 0.012, 8, 80);
+          const torusMat = new THREE.MeshBasicMaterial({ color: 0xc9a84c, transparent: true, opacity: 0.2 });
+          const ring = new THREE.Mesh(torusGeom, torusMat);
+          ring.rotation.x = Math.random() * Math.PI;
+          ring.rotation.y = Math.random() * Math.PI;
+          scene.add(ring);
+          torusRings.push(ring);
+        });
+      }
+
+      window.addEventListener('resize', onWindowResize);
+      animateThree();
+    }
+
+    function animateThree() {
+      if (document.visibilityState === 'visible') {
+        // Rotations
+        if (icosahedron) {
+          icosahedron.rotation.x += 0.0016;
+          icosahedron.rotation.y += 0.0018;
+        }
+
+        // Particle Star drift upward
+        if (stars) {
+          const positions = stars.geometry.attributes.position.array;
+          for (let i = 1; i < positions.length; i += 3) {
+            positions[i] += 0.006;
+            if (positions[i] > 15) positions[i] = -15;
+          }
+          stars.geometry.attributes.position.needsUpdate = true;
+        }
+
+        // Torus Ring Rotations
+        torusRings.forEach((ring, idx) => {
+          ring.rotation.x += 0.001 * (idx + 1);
+          ring.rotation.y += 0.0015 * (idx + 1);
+        });
+
+        // Smooth Camera Lerp on mouse parallax
+        camera.position.x += (targetCameraX - camera.position.x) * 0.05;
+        camera.position.y += (targetCameraY - camera.position.y) * 0.05;
+        camera.lookAt(0, 0, 0);
+
+        renderer.render(scene, camera);
+      }
+      requestAnimationFrame(animateThree);
+    }
+
+    function onWindowResize() {
+      const canvasContainer = document.getElementById('hero-section');
+      camera.aspect = canvasContainer.clientWidth / canvasContainer.clientHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight);
+    }
+
+    // -------------------------------------------------------------
+    // CHARTS AND FINANCIAL ENGINE (ChartJS Configuration)
+    // -------------------------------------------------------------
+    let revLine, revDoughnut, platformRiskDoughnut;
+
+    function renderCoreCharts() {
+      const lineCtx = document.getElementById('revLineChart').getContext('2d');
+      const doughnutCtx = document.getElementById('revDoughnutChart').getContext('2d');
+
+      // 1. Five-year revenue trajectory Line Chart
+      const gradient = lineCtx.createLinearGradient(0, 0, 0, 400);
+      gradient.addColorStop(0, 'rgba(201, 168, 76, 0.35)');
+      gradient.addColorStop(1, 'rgba(201, 168, 76, 0)');
+
+      revLine = new Chart(lineCtx, {
+        type: 'line',
+        data: {
+          labels: ['Year 1', 'Year 2', 'Year 3', 'Year 4', 'Year 5'],
+          datasets: [{
+            label: 'Total Net Revenue (Millions)',
+            data: [5.3, 22.2, 60.9, 118, 205],
+            borderColor: '#c9a84c',
+            borderWidth: 2,
+            backgroundColor: gradient,
+            fill: true,
+            tension: 0.35,
+            pointBackgroundColor: '#e8c56d',
+            pointRadius: 5,
+            pointHoverRadius: 8
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#a8b8d0', font: { family: 'DM Mono' } } },
+            x: { grid: { color: 'none' }, ticks: { color: '#a8b8d0', font: { family: 'DM Mono' } } }
+          }
+        }
+      });
+
+      // 2. Revenue Streams Breakdown Doughnut
+      revDoughnut = new Chart(doughnutCtx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Audits', 'SaaS Monitor', 'Federal Gov', 'Advisory', 'Partner Channel', 'Training', 'Certification Seals'],
+          datasets: [{
+            data: APP_DATA.financials[5].data,
+            backgroundColor: [
+              '#c9a84c', '#e8c56d', '#a8b8d0', '#e8eaf0', '#f5e4b0', '#7a8fa8', 'rgba(201, 168, 76, 0.15)'
+            ],
+            borderColor: 'transparent'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'bottom', labels: { color: '#a8b8d0', font: { family: 'DM Mono', size: 10 } } }
+          },
+          cutout: '70%'
+        }
+      });
+
+      // 3. Platform Internal System Risks Doughnut
+      const riskCtx = document.getElementById('platformRiskChart').getContext('2d');
+      platformRiskDoughnut = new Chart(riskCtx, {
+        type: 'doughnut',
+        data: {
+          labels: ['High Risk [Critical]', 'Medium Risk [Audit Due]', 'Low Risk [Approved]'],
+          datasets: [{
+            data: [8, 23, 67],
+            backgroundColor: ['#f25c5c', '#c9a84c', '#a8b8d0'],
+            borderColor: 'transparent'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { position: 'right', labels: { color: '#a8b8d0', font: { family: 'DM Mono', size: 10 } } } },
+          cutout: '65%'
+        }
+      });
+    }
+
+    function switchYear(y) {
+      // Toggle button active visual states
+      const btns = document.querySelectorAll('.tab-btn');
+      btns.forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+
+      const currentStats = APP_DATA.financials[y];
+      
+      // Update charts & headers
+      document.getElementById('doughnut-title').innerText = `Year ${y} Breakdown`;
+      
+      // Animate line chart path update highlight
+      const slicedLabels = ['Year 1', 'Year 2', 'Year 3', 'Year 4', 'Year 5'].slice(0, y);
+      const slicedData = [5.3, 22.2, 60.9, 118, 205].slice(0, y);
+      revLine.data.labels = slicedLabels;
+      revLine.data.datasets[0].data = slicedData;
+      revLine.update();
+
+      revDoughnut.data.datasets[0].data = currentStats.data;
+      revDoughnut.update();
+
+      // Trigger values transition animations
+      animateCountUp('kpi-margin', parseInt(currentStats.margin), '%');
+      animateCountUp('kpi-ebitda', parseFloat(currentStats.ebitda.replace(/[^\d.]/g, '')), 'M', '$');
+      animateCountUp('kpi-arr', parseFloat(currentStats.arr.replace(/[^\d.]/g, '')), 'M', '$');
+      animateCountUp('kpi-clients', parseInt(currentStats.clients));
+    }
+
+    function animateCountUp(elemId, endVal, suffix = '', prefix = '') {
+      const elem = document.getElementById(elemId);
+      if (!elem) return;
+      const duration = 1500; // ms
+      const startTime = performance.now();
+      const startVal = 0;
+      
+      function update(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        
+        // Easing: easeOutExpo
+        const ease = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+        const currentVal = startVal + (endVal - startVal) * ease;
+        
+        const decimalStr = endVal.toString().split('.')[1] || '';
+        const decimalPlaces = Math.min(decimalStr.length, 2);
+        
+        const formattedVal = currentVal.toLocaleString(undefined, { 
+          minimumFractionDigits: decimalPlaces, 
+          maximumFractionDigits: decimalPlaces 
+        });
+        
+        elem.innerHTML = prefix + formattedVal + suffix;
+        
+        if (progress < 1) {
+          requestAnimationFrame(update);
+        }
+      }
+      
+      requestAnimationFrame(update);
+    }
+
+    // -------------------------------------------------------------
+    // REAL-TIME SECURITY ALERTS AND TELEMETRY ENGINE
+    // -------------------------------------------------------------
+    const alertFeedMessages = [
+      { type: "alert-high", text: "Prohibited operational vector triggered standard model. Deplacement blocked. · 2m ago" },
+      { type: "alert-medium", text: "Critical bias deviation identified in hiring validation pipeline. Review due. · 12m ago" },
+      { type: "alert-info", text: "New conforming rules applied matching EU AI Act High-Risk directives. · 1h ago" },
+      { type: "alert-medium", text: "Untracked third-party vendor model interface integrated to database. · 3h ago" },
+      { type: "alert-high", text: "Adversarial vulnerability probe completed on core financial nodes. Drift: 1.2%. · 5h ago" }
+    ];
+
+    function runTelemetryLogs() {
+      const feed = document.getElementById('alert-feed');
+      feed.innerHTML = alertFeedMessages.map(m => `
+        <div class="alert-item ${m.type}">
+          ${m.text}
+        </div>
+      `).join('');
+
+      // Add a random warning alert event every 8 seconds to show the platform is alive!
+      setInterval(() => {
+        const types = ["alert-high", "alert-medium", "alert-info"];
+        const texts = [
+          "Model drift detected on predictive pricing node. Drift factor: 2.1%.",
+          "Automated ledger backup finalized under cryptographic validation seal.",
+          "Federal oversight board updated compliance requirements mapping.",
+          "Anomaly alert: Unauthorized adversarial probing identified on API port."
+        ];
+        const randomType = types[Math.floor(Math.random() * types.length)];
+        const randomText = texts[Math.floor(Math.random() * texts.length)] + " · Just now";
+
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert-item ${randomType}`;
+        alertDiv.innerText = randomText;
+        alertDiv.style.opacity = '0';
+        alertDiv.style.transform = 'translateY(-10px)';
+
+        feed.insertBefore(alertDiv, feed.firstChild);
+        gsap.to(alertDiv, { opacity:1, translateY:0, duration: 0.4 });
+
+        if (feed.childNodes.length > 8) feed.removeChild(feed.lastChild);
+      }, 7000);
+    }
+
+    function clearLogs() {
+      const feed = document.getElementById('alert-feed');
+      feed.innerHTML = `<div class='alert-item alert-info' style='text-align:center;'>Telemetry logs cleared. System monitoring remains active.</div>`;
+    }
+
+    // -------------------------------------------------------------
+    // INTERACTIVE TOOLS & CURSOR ACTIONS
+    // -------------------------------------------------------------
+    function setupInteractions() {
+      // 1. Mouse coordinates updates for Three.js camera parallax
+      window.addEventListener('mousemove', (e) => {
+        targetCameraX = (e.clientX - window.innerWidth / 2) / (window.innerWidth / 2) * 1.6;
+        targetCameraY = -(e.clientY - window.innerHeight / 2) / (window.innerHeight / 2) * 1.2;
+      });
+
+      // 2. Custom Cursor Movement & hover dynamics
+      const cursor = document.getElementById('custom-cursor');
+      let cx = 0, cy = 0;
+      let mx = 0, my = 0;
+
+      window.addEventListener('mousemove', (e) => {
+        mx = e.clientX;
+        my = e.clientY;
+      });
+
+      function updateCursor() {
+        cx += (mx - cx) * 0.14;
+        cy += (my - cy) * 0.14;
+        cursor.style.left = cx + 'px';
+        cursor.style.top = cy + 'px';
+        requestAnimationFrame(updateCursor);
+      }
+      updateCursor();
+
+      document.querySelectorAll('a, button, .accordion-header, .road-node, .gantt-bar, .phase-card, table tr').forEach(el => {
+        el.addEventListener('mouseenter', () => cursor.classList.add('cursor-hover'));
+        el.addEventListener('mouseleave', () => cursor.classList.remove('cursor-hover'));
+      });
+
+      // 3. Competitive Matrix mouse tooltip tracking
+      const compTable = document.getElementById('competitor-table');
+      const tooltip = document.getElementById('matrix-tooltip');
+
+      document.querySelectorAll('.matrix-row').forEach(row => {
+        row.addEventListener('mousemove', (e) => {
+          tooltip.style.display = 'block';
+          tooltip.style.left = (e.clientX + 15) + 'px';
+          tooltip.style.top = (e.clientY + 15) + 'px';
+          tooltip.innerHTML = `
+            <strong style="color:var(--gold-bright);">${row.dataset.competitor}</strong><br>
+            <span style="color:#fff;">Operational Deficit:</span> ${row.dataset.gap}
+          `;
+        });
+        row.addEventListener('mouseleave', () => {
+          tooltip.style.display = 'none';
+        });
+      });
+
+      // 4. Federal Score circular gauge loader
+      gsap.to('#gauge-progress-circle', {
+        strokeDasharray: '220 360',
+        duration: 2.2,
+        ease: 'power3.out',
+        scrollTrigger: { trigger: '#platform-section', start: 'top 70%' }
+      });
+    }
+
+    // Header color background adjustments on scroll Down
+    window.addEventListener('scroll', () => {
+      const header = document.getElementById('main-header');
+      if (window.scrollY > 60) header.classList.add('scrolled');
+      else header.classList.remove('scrolled');
+    });
+
+    function toggleMenu() {
+      const menu = document.getElementById('mobile-menu');
+      menu.classList.toggle('open');
+    }
+
+    function subscribeEmail() {
+      const email = document.getElementById('news-email').value;
+      const responseBox = document.getElementById('sub-feedback');
+      if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+        responseBox.style.color = '#f25c5c';
+        responseBox.innerText = 'Valid corporate domain required.';
+        return;
+      }
+      responseBox.style.color = 'var(--gold-bright)';
+      responseBox.innerText = 'Cryptographic updates subscribed successfully.';
+    }
+
+    // -------------------------------------------------------------
+    // ENTRY ANCHORS & LIFECYCLE (Gsap Animations)
+    // -------------------------------------------------------------
+    window.onload = function() {
+      // Build dynamic components
+      buildDynamicContent();
+      
+      // Initialise smooth scroll lenis
+      const lenis = new Lenis({ duration: 1.2, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
+      function raf(time) {
+        lenis.raf(time);
+        requestAnimationFrame(raf);
+      }
+      requestAnimationFrame(raf);
+
+      // Scroll progress tracking line fill
+      window.addEventListener('scroll', () => {
+        const h = document.documentElement;
+        const st = h.scrollTop || document.body.scrollTop;
+        const sh = h.scrollHeight || document.body.scrollHeight;
+        const percent = (st / (sh - h.clientHeight)) * 100;
+        document.getElementById('scroll-progress').style.width = percent + '%';
+      });
+
+      // Build Three Scene
+      initThree();
+
+      // Configure static charts
+      renderCoreCharts();
+
+      // Interactions setup
+      setupInteractions();
+
+      // Trigger continuous platform warns
+      runTelemetryLogs();
+
+      // Loaders Exit Sequences
+      gsap.to('#loader .progress-bar', {
+        width: '100%',
+        duration: 1.8,
+        ease: 'power2.inOut',
+        onComplete: () => {
+          gsap.to('#loader', {
+            yPercent: -100,
+            duration: 0.8,
+            ease: 'power3.inOut',
+            onComplete: () => {
+              document.getElementById('loader').style.display = 'none';
+              runEntranceGSAP();
+            }
+          });
+        }
+      });
+    };
+
+    function runEntranceGSAP() {
+      gsap.registerPlugin(ScrollTrigger, TextPlugin);
+
+      // Hero Content revealing transitions
+      const tl = gsap.timeline();
+      tl.from('.badge-hero', { y: -20, opacity:0, duration: 0.6, ease: 'power2.out' })
+        .from('.hero-headline', { y: 40, opacity:0, duration: 0.8, ease: 'power3.out' }, '-=0.3')
+        .from('.hero-subhead', { y: 20, opacity:0, duration: 0.6 }, '-=0.4')
+        .from('.hero-ctas', { y: 15, opacity:0, duration: 0.5 }, '-=0.3');
+
+      // Scroll reveal trigger animations
+      gsap.from('#stats-section .stat-card', {
+        scrollTrigger: { trigger: '#stats-section', start: 'top 85%' },
+        y: 40,
+        opacity: 0,
+        stagger: 0.15,
+        duration: 0.8,
+        ease: 'power2.out',
+        onComplete: () => {
+          animateCountUp('stat-num-1', 42, 'B+');
+          animateCountUp('stat-num-2', 127, '+');
+          animateCountUp('stat-num-3', 92, '%');
+          animateCountUp('stat-num-4', 2.1, 'T+', '$');
+        }
+      });
+
+      gsap.from('#problem-section .glass-card, #problem-section .accordion-item', {
+        scrollTrigger: { trigger: '#problem-section', start: 'top 80%' },
+        y: 30,
+        opacity: 0,
+        stagger: 0.1,
+        duration: 0.7
+      });
+
+      gsap.from('#services-section .glass-card', {
+        scrollTrigger: { trigger: '#services-section', start: 'top 80%' },
+        scale: 0.94,
+        opacity: 0,
+        stagger: 0.12,
+        duration: 0.8
+      });
+
+      // Pin standard horizontal timeline ScrollTrigger
+      const trackElem = document.getElementById('horizontal-track');
+      gsap.to(trackElem, {
+        x: () => -(trackElem.scrollWidth - window.innerWidth),
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '.standard-pin-container',
+          pin: true,
+          scrub: 1,
+          start: 'top top',
+          end: () => `+=${trackElem.scrollWidth - window.innerWidth}`,
+          invalidateOnRefresh: true
+        }
+      });
+
+      // Timeline scroll indicator drawing
+      gsap.fromTo('.timeline-center-line', 
+        { height: '0%' },
+        {
+          scrollTrigger: {
+            trigger: '.timeline-container',
+            start: 'top 50%',
+            end: 'bottom 80%',
+            scrub: true
+          },
+          height: '100%',
+          ease: 'none'
+        }
+      );
+
+      gsap.from('.timeline-card', {
+        scrollTrigger: { trigger: '#timeline-section', start: 'top 75%' },
+        y: 50,
+        opacity: 0,
+        stagger: 0.15,
+        duration: 0.8
+      });
+    }
+  </script>
+</body>
+</html>
